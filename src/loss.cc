@@ -217,7 +217,11 @@ void HierarchicalSoftmaxLoss::buildTree(const std::vector<int64_t>& counts) {
   for (int32_t i = osz_; i < 2 * osz_ - 1; i++) {
     int32_t mini[2] = {0};
     for (int32_t j = 0; j < 2; j++) {
-      if (leaf >= 0 && tree_[leaf].count < tree_[node].count) {
+      bool isLeafValid = leaf >= 0;
+      bool isNodeExhausted = node >= tree_.size() - 1;
+      bool isNodeInRange = node < tree_.size() - 1;
+      bool isLeafCountSmaller = isNodeInRange && tree_[leaf].count < tree_[node].count;
+      if (isLeafValid && (isLeafCountSmaller || isNodeExhausted)) {
         mini[j] = leaf--;
       } else {
         mini[j] = node++;
